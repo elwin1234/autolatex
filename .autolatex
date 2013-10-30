@@ -1,4 +1,7 @@
 #!/bin/bash
+# BIB and TEX should be named the same
+# For foobar.tex call autolatex foobar
+# add .autolatex to your aliases
 
 if [ "$#" -ne 1 ];
 then
