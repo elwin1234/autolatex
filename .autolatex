@@ -1,0 +1,54 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ];
+then
+  printf "which doc?!\n"
+else 
+  if [ ! -f $1.tex ]; then
+    printf "No such file...\n"
+  else
+    T="$(date +%s)"
+    printf "Writing "
+    printf $1
+    printf ".pdf from "
+    printf $1
+    printf ".tex...\n"
+    pdflatex $1.tex > /dev/null
+    wait
+    printf "Done.\n"
+    if [ -f $1.bib ]; then
+      printf "Running the bibliography file"
+      printf $1
+      printf ".bib...\n"
+      bibtex $1 > /dev/null
+      wait
+      printf "Done bibbing.\n"
+      printf "Regenerating "
+      printf $1
+      printf ".pdf from "
+      printf $1
+      printf ".tex, including the bibfile...\n"
+      pdflatex $1.tex > /dev/null
+      wait
+      pdflatex $1.tex > /dev/null
+      wait
+      printf "Done rewriting.\n"
+    fi 
+    printf "Removing junk...\n"
+    rm $1.aux
+    rm $1.bbl
+    rm $1.blg
+    rm $1.log
+    T="$(($(date +%s)-T))"
+    printf  "__________________________________\nDone in ${T} seconds\nOutput written to "
+    printf  $1
+    printf  '.pdf\n'
+    read -r -p "Would you like to open the file? [y/n]" response
+    if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]; then
+      open $1.pdf
+      else
+      echo "Byebye"
+    fi
+  fi
+fi
+
